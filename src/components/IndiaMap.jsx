@@ -6,15 +6,15 @@ const IndiaMap = ({ onSelectState }) => {
   console.log("✅ InfoPanel onSelectState:",onSelectState);
 
   return (
-    <div className="w-full h-[600px] bg-white rounded-xl shadow-md p-4 flex items-center justify-center">
+    <div className="w-full h-[700px] bg-white rounded-xl shadow-md p-4 flex items-center justify-center">
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{
-          scale: 400,
-          center: [110,-10],
+          scale: 1000,
+          center: [85,21],
         }}
         width={600}
-        height={700}
+        height={800}
         style={{ width: "100%", height: "auto" }}
       >
         <Geographies geography={indiaTopo}>

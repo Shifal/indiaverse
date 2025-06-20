@@ -1,13 +1,13 @@
 const InfoPanel = ({ selectedState, activeTab, setActiveTab, tabData, tabs }) => {
 
     return (
-        <div className="bg-white shadow-xl rounded-xl p-2 h-full min-h-[400px] flex flex-col text-justify">
-        <h2 className="text-xl font-semibold mb-1">
+        <div className="bg-white shadow-xl rounded-xl p-4 h-full min-h-[400px] flex flex-col text-justify">
+        <h2 className="text-xl font-semibold mb-4">
           {selectedState ? `📍 ${selectedState} – ${activeTab}` : "📍 Select a State"}
         </h2>
   
         {/* Tabs */}
-        <div className="flex flex-wrap gap-1 mb-4">
+        <div className="flex flex-wrap gap-2 mb-5">
           {tabs.map((tab) => (
             <button
               key={tab}
