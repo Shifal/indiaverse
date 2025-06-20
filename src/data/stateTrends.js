@@ -169,7 +169,7 @@ const mockData = {
   },
 
   /* Union Territories */
-  "Andaman and Nicobar Islands": {
+  "Andaman and Nicobar": {
     Trends: ["#PortBlairBeaches"],
     Jobs: ["Marine Biologist", "Tour Guide"],
     Startups: ["Eco‑Tourism"],
