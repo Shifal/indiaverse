@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import IndiaMap from "../components/IndiaMap";
 import InfoPanel from "../components/InfoPanel";
 import mockData from "../data/stateTrends";
-import ThemeToggle from "../components/ThemeToggle"; // 💡 Import the toggle button
+import ThemeToggle from "../components/ThemeToggle";
 
 const TABS = ["Trends", "Jobs", "Startups", "Videos"];
 
@@ -15,13 +15,12 @@ const HomePage = () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px- py-8">
-                {/* 🌗 Dark Mode Toggle Button */}
-                <ThemeToggle />
+        <ThemeToggle />
         {/* Header */}
         <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
           🇮🇳 IndiaVerse <span className="text-gray-700">– Real-Time Local Trends</span>
         </h1>
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-1">
           <div className="w-full md:w-1/2 bg-blue-50 p-4 rounded-lg shadow">
             <IndiaMap onSelectState={setSelectedState} />
           </div>
