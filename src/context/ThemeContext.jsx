@@ -18,11 +18,9 @@ export const ThemeProvider = ({ children }) => {
       root.classList.remove("dark");
     }
     localStorage.setItem("theme", theme);
-  }, [theme]);  
+  }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === "dark" ? "light" : "dark"));
-  };
+  const toggleTheme = () => setTheme(prev => (prev === "dark" ? "light" : "dark"));
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

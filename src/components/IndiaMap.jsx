@@ -3,16 +3,11 @@ import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import indiaTopo from "../assets/india.topo.json";
 
 const IndiaMap = ({ onSelectState }) => {
-  console.log("✅ InfoPanel onSelectState:",onSelectState);
-
   return (
-    <div className="w-full h-[700px] bg-white rounded-xl shadow-md p-4 flex items-center justify-center">
+    <div className="w-full h-[800px] bg-white rounded-xl shadow-md p-2 flex items-center justify-center">
       <ComposableMap
         projection="geoMercator"
-        projectionConfig={{
-          scale: 1000,
-          center: [85,21],
-        }}
+        projectionConfig={{ scale: 1000, center: [85, 21] }}
         width={600}
         height={800}
         style={{ width: "100%", height: "auto" }}
@@ -25,10 +20,7 @@ const IndiaMap = ({ onSelectState }) => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  onClick={() => {
-                    console.log("Clicked state:", stateName);
-                    onSelectState(stateName);
-                  }}                  
+                  onClick={() => onSelectState(stateName)}
                   style={{
                     default: {
                       fill: "#f3f4f6",
