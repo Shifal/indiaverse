@@ -1,0 +1,43 @@
+const stateInfo = {
+    "Andhra Pradesh":       { population: "52.9M", capital: "Amaravati" },
+    "Arunachal Pradesh":    { population: "1.38M", capital: "Itanagar" },
+    "Assam":                { population: "31.2M", capital: "Dispur" },
+    "Bihar":                { population: "131.0M", capital: "Patna" },
+    "Chhattisgarh":         { population: "30.98M", capital: "Raipur" },
+    "Goa":                  { population: "1.59M", capital: "Panaji" },
+    "Gujarat":              { population: "63.9M", capital: "Gandhinagar" },
+    "Haryana":              { population: "31.06M", capital: "Chandigarh" },
+    "Himachal Pradesh":     { population: "7.55M", capital: "Shimla" },
+    "Jharkhand":            { population: "40.63M", capital: "Ranchi" },
+    "Karnataka":            { population: "66.17M", capital: "Bengaluru" },
+    "Kerala":               { population: "36.11M", capital: "Thiruvananthapuram" },
+    "Madhya Pradesh":       { population: "88.99M", capital: "Bhopal" },
+    "Maharashtra":          { population: "128.66M", capital: "Mumbai" },
+    "Manipur":              { population: "3.29M", capital: "Imphal" },
+    "Meghalaya":            { population: "2.97M", capital: "Shillong" },
+    "Mizoram":              { population: "1.26M", capital: "Aizawl" },
+    "Nagaland":             { population: "1.98M", capital: "Kohima" },
+    "Odisha":               { population: "46.95M", capital: "Bhubaneswar" },
+    "Punjab":               { population: "31.19M", capital: "Chandigarh" },
+    "Rajasthan":            { population: "83.06M", capital: "Jaipur" },
+    "Sikkim":               { population: "0.70M", capital: "Gangtok" },
+    "Tamil Nadu":           { population: "77.39M", capital: "Chennai" },
+    "Telangana":            { population: "38.50M", capital: "Hyderabad" },
+    "Tripura":              { population: "4.23M", capital: "Agartala" },
+    "Uttar Pradesh":        { population: "241.27M", capital: "Lucknow" },
+    "Uttarakhand":          { population: "11.91M", capital: "Dehradun" },
+    "West Bengal":          { population: "100.20M", capital: "Kolkata" },
+  
+    // Union Territories
+    "Delhi":                { population: "22.28M", capital: "Delhi" },
+    "Puducherry":           { population: "1.73M", capital: "Puducherry" },
+    "Chandigarh":           { population: "1.26M", capital: "Chandigarh" },
+    "Jammu and Kashmir":    { population: "12.27M", capital: "Srinagar / Jammu" },
+    "Ladakh":               { population: "0.275M", capital: "Leh / Kargil" },
+    "Andaman and Nicobar":  { population: "0.405M", capital: "Port Blair" },
+    "Dadra and Nagar Haveli and Daman and Diu": { population: "1.48M", capital: "Daman / Silvassa" },
+    "Lakshadweep":          { population: "0.069M", capital: "Kavaratti" },
+  };
+  
+  export default stateInfo;
+  

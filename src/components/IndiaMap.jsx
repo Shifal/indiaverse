@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import indiaTopo from "../assets/india.topo.json";
+import stateInfo from "../data/stateInfo";
 
 const IndiaMap = ({ onSelectState }) => {
+  const [tooltip, setTooltip] = useState({
+    visible: true,
+    content: {
+      name: "India",
+      population: "1.4B",
+      capital: "New Delhi",
+    },
+  });
+
+
   return (
-    <div className="w-full h-[800px] bg-white rounded-xl shadow-md p-2 flex items-center justify-center">
+    <div className="relative w-full h-[800px] bg-white rounded-xl shadow-md p-2 flex items-center justify-center">
+      {/* Tooltip */}
+      {tooltip.visible && (
+        <div
+          className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded px-3 py-2 shadow-lg"
+        >
+          <strong>{tooltip.content?.name}</strong><br />
+          Population: {tooltip.content?.population}<br />
+          Capital: {tooltip.content?.capital}
+        </div>
+      )}
+
       <ComposableMap
         projection="geoMercator"
-        projectionConfig={{ scale: 1000, center: [85, 21] }}
-        width={600}
+        projectionConfig={{ scale: 1300, center: [80, 22] }}
+        width={800}
         height={800}
         style={{ width: "100%", height: "auto" }}
       >
@@ -16,34 +38,41 @@ const IndiaMap = ({ onSelectState }) => {
           {({ geographies }) =>
             geographies.map((geo) => {
               const stateName = geo.properties.name;
+              const info = stateInfo[stateName] || {};
+
               return (
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  onClick={() => onSelectState(stateName)}
+                  stroke="#999"
+                  strokeWidth={0.5}
                   style={{
-                    default: {
-                      fill: "#f3f4f6",
-                      stroke: "#1f2937",
-                      strokeWidth: 0.6,
-                      outline: "none",
-                      transition: "all 0.3s ease-in-out",
-                    },
-                    hover: {
-                      fill: "#2563eb",
-                      stroke: "#1f2937",
-                      strokeWidth: 1,
-                      outline: "none",
-                      cursor: "pointer",
-                      filter: "drop-shadow(0 0 4px rgba(37,99,235,0.5))",
-                    },
-                    pressed: {
-                      fill: "#1e40af",
-                      stroke: "#1f2937",
-                      strokeWidth: 1.2,
-                      outline: "none",
-                    },
+                    default: { fill: "#E0E0E0", outline: "none" },
+                    hover: { fill: "#FFB300", outline: "none", cursor: "pointer" },
+                    pressed: { fill: "#F57C00", outline: "none" },
                   }}
+                  onMouseEnter={() => {
+                    setTooltip({
+                      visible: true,
+                      content: {
+                        name: stateName,
+                        population: info.population || "N/A",
+                        capital: info.capital || "N/A",
+                      },
+                    });
+                  }}
+                  onMouseLeave={() => {
+                    // Reset to default India info
+                    setTooltip({
+                      visible: true,
+                      content: {
+                        name: "India",
+                        population: "1.4B",
+                        capital: "New Delhi",
+                      },
+                    });
+                  }}
+                  onClick={() => onSelectState(stateName)}
                 />
               );
             })
