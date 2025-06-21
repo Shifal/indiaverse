@@ -17,6 +17,8 @@ const HomePage = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const inputRef = useRef(null);
+  const [resetMap, setResetMap] = useState(false);
+  const [resetMapTrigger, setResetMapTrigger] = useState(false);
 
   const tabData = selectedState && mockData[selectedState]?.[activeTab];
 
@@ -59,7 +61,16 @@ const HomePage = () => {
     setSuggestions([]);
     setShowSuggestions(false);
     setActiveSuggestionIndex(-1);
+    setResetMap(true);
+    setResetMapTrigger(Date.now());
   };
+
+  useEffect(() => {
+    if (resetMap) {
+      setResetMap(false);
+    }
+  }, [resetMap]);
+
 
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
@@ -183,6 +194,7 @@ const HomePage = () => {
                   setSearchTerm(state);
                 }}
                 selectedState={selectedState}
+                resetMapTrigger={resetMapTrigger}
               />
             </div>
 
