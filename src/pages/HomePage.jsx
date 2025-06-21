@@ -8,6 +8,7 @@ import OfflineNotice from "../components/OfflineNotice";
 import confetti from "canvas-confetti";
 
 const TABS = ["Trends", "Jobs", "Startups", "Videos"];
+const OPEN_CAGE_API_KEY = "057fa619751a4265abfd3590263080fb";
 
 const HomePage = () => {
   const [selectedState, setSelectedState] = useState(null);
@@ -17,11 +18,10 @@ const HomePage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-  const inputRef = useRef(null);
-  const dropdownRef = useRef(null);
   const [resetMap, setResetMap] = useState(false);
   const [resetMapTrigger, setResetMapTrigger] = useState(false);
-
+  const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
   const allStates = Object.keys(mockData);
   const tabData = selectedState && mockData[selectedState]?.[activeTab];
 
@@ -38,13 +38,12 @@ const HomePage = () => {
 
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) {
-      setSuggestions(allStates);
-    } else {
-      const matchedStates = allStates.filter((state) =>
+    if (!term) setSuggestions(allStates);
+    else {
+      const matched = allStates.filter((state) =>
         state.toLowerCase().includes(term)
       );
-      setSuggestions(matchedStates);
+      setSuggestions(matched);
     }
     setActiveSuggestionIndex(-1);
   }, [searchTerm]);
@@ -59,6 +58,20 @@ const HomePage = () => {
       });
     }
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (resetMap) setResetMap(false);
+  }, [resetMap]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSelectSuggestion = (state) => {
     setSelectedState(state);
@@ -78,18 +91,10 @@ const HomePage = () => {
     setResetMapTrigger(Date.now());
   };
 
-  useEffect(() => {
-    if (resetMap) {
-      setResetMap(false);
-    }
-  }, [resetMap]);
-
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
       setShowSuggestions(false);
-      return;
     }
-
     if (!showSuggestions || suggestions.length === 0) return;
 
     if (e.key === "ArrowDown") {
@@ -109,11 +114,9 @@ const HomePage = () => {
   const getHighlightedText = (text, highlight) => {
     const index = text.toLowerCase().indexOf(highlight.toLowerCase());
     if (index === -1) return text;
-
     const before = text.slice(0, index);
     const match = text.slice(index, index + highlight.length);
     const after = text.slice(index + highlight.length);
-
     return (
       <>
         {before}
@@ -123,16 +126,26 @@ const HomePage = () => {
     );
   };
 
-  // Hide dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowSuggestions(false);
+  const handleUseMyLocation = async () => {
+    if (!navigator.geolocation) return alert("Geolocation not supported.");
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const response = await fetch(
+          `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${OPEN_CAGE_API_KEY}`
+        );
+        const data = await response.json();
+        const state = data?.results?.[0]?.components?.state;
+        if (state && allStates.includes(state)) {
+          handleSelectSuggestion(state);
+        } else {
+          alert("Your location does not map to an Indian state in this app.");
+        }
+      } catch (err) {
+        console.error("Error in geolocation:", err);
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    });
+  };
 
   return (
     <>
@@ -140,11 +153,9 @@ const HomePage = () => {
       <Layout>
         <div className="max-w-8xl mx-auto px-4 py-8">
           <ThemeToggle />
-
-          {/* Animated Title */}
           <div className="flex justify-center items-center gap-3 mb-6">
             <div className="w-10 h-10 animate-spin-slow">
-              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 120 120" fill="none">
                 <defs>
                   <linearGradient id="tricolor" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor="#FF9933" />
@@ -175,26 +186,17 @@ const HomePage = () => {
                 })}
               </svg>
             </div>
-
             <h1 className="text-3xl font-bold text-center text-blue-800 dark:text-blue-300">
-              IndiaVerse{" "}
-              <span className="text-gray-700 dark:text-gray-300">
-                – Real-Time Local Trends
-              </span>
+              IndiaVerse <span className="text-gray-700 dark:text-gray-300">– Real-Time Local Trends</span>
             </h1>
           </div>
-
-
-
 
           <div className="flex flex-col md:flex-row gap-1">
             {/* Map + Search */}
             <div className="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow text-gray-900 dark:text-white relative overflow-hidden">
-              <div
-                ref={dropdownRef}
-                className="absolute top-4 left-4 z-20 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow p-2 flex items-center gap-2 w-[280px]"
-              >
-                {/* Search */}
+
+              {/* Search Box */}
+              <div ref={dropdownRef} className="absolute top-4 left-4 z-20 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow p-2 flex items-center gap-2 w-[280px]">
                 <div className="relative w-full">
                   <div className="flex items-center relative">
                     <input
@@ -210,7 +212,6 @@ const HomePage = () => {
                       onKeyDown={handleKeyDown}
                       className="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
                     />
-                    {/* Dropdown Icon */}
                     <button
                       className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
                       title="Show all states"
@@ -219,28 +220,15 @@ const HomePage = () => {
                         setSuggestions(allStates);
                       }}
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      ▼
                     </button>
                   </div>
 
-                  {/* Suggestions */}
+                  {/* Dropdown */}
                   <div
                     className={`absolute left-0 top-10 z-30 w-full transition-all origin-top transform duration-200 ${showSuggestions
-                        ? "opacity-100 scale-y-100"
-                        : "opacity-0 scale-y-75 pointer-events-none"
+                      ? "opacity-100 scale-y-100"
+                      : "opacity-0 scale-y-75 pointer-events-none"
                       }`}
                   >
                     <ul className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow max-h-60 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
@@ -248,10 +236,9 @@ const HomePage = () => {
                         suggestions.map((s, idx) => (
                           <li
                             key={idx}
-                            className={`px-3 py-1.5 text-sm cursor-pointer transition duration-200 delay-[${idx * 20
-                              }ms] ${idx === activeSuggestionIndex
-                                ? "bg-blue-100 dark:bg-gray-700"
-                                : "hover:bg-blue-50 dark:hover:bg-gray-700"
+                            className={`px-3 py-1.5 text-sm cursor-pointer transition duration-200 ${idx === activeSuggestionIndex
+                              ? "bg-blue-100 dark:bg-gray-700"
+                              : "hover:bg-blue-50 dark:hover:bg-gray-700"
                               }`}
                             onMouseDown={() => handleSelectSuggestion(s)}
                           >
@@ -259,15 +246,12 @@ const HomePage = () => {
                           </li>
                         ))
                       ) : (
-                        <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 italic">
-                          No results found.
-                        </li>
+                        <li className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400 italic">No results found.</li>
                       )}
                     </ul>
                   </div>
                 </div>
 
-                {/* Reset */}
                 <button
                   onClick={handleReset}
                   className="px-2 py-1 text-xs rounded-md font-medium bg-red-500 text-white hover:bg-red-600 transition"
@@ -276,7 +260,15 @@ const HomePage = () => {
                 </button>
               </div>
 
-              {/* Map */}
+              {/* 📍 Use My Location Button */}
+              <button
+                onClick={handleUseMyLocation}
+                className="absolute bottom-4 right-4 z-30 px-3 py-1.5 rounded-full text-sm bg-blue-600 text-white shadow-md hover:bg-blue-700 transition"
+                title="Detect your state using GPS"
+              >
+                📍
+              </button>
+
               <IndiaMap
                 onSelectState={(state) => {
                   setSelectedState(state);
