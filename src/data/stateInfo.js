@@ -17,7 +17,7 @@ const stateInfo = {
     "Meghalaya":            { population: "2.97M", capital: "Shillong" },
     "Mizoram":              { population: "1.26M", capital: "Aizawl" },
     "Nagaland":             { population: "1.98M", capital: "Kohima" },
-    "Odisha":               { population: "46.95M", capital: "Bhubaneswar" },
+    "Orissa":               { population: "46.95M", capital: "Bhubaneswar" },
     "Punjab":               { population: "31.19M", capital: "Chandigarh" },
     "Rajasthan":            { population: "83.06M", capital: "Jaipur" },
     "Sikkim":               { population: "0.70M", capital: "Gangtok" },

@@ -107,7 +107,7 @@ const mockData = {
     Startups: ["Ethnic Art Ecommerce"],
     Videos: ["Hornbill Festival 2025"],
   },
-  "Odisha": {
+  "Orissa": {
     Trends: ["#JagannathPuri", "#KonarkSunTemple"],
     Jobs: ["Temple Tour Manager", "Art Restorer"],
     Startups: ["Handloom Odisha"],
