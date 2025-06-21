@@ -15,7 +15,7 @@ const IndiaMap = ({ onSelectState }) => {
 
 
   return (
-    <div className="relative w-full h-[800px] bg-white rounded-xl shadow-md p-2 flex items-center justify-center">
+    <div className="relative w-full h-[800px] bg-white dark:bg-gray-900 text-gray-800 dark:text-white rounded-xl shadow-md p-2 flex items-center justify-center">
       {/* Tooltip */}
       {tooltip.visible && (
         <div

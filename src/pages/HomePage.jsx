@@ -34,15 +34,20 @@ const HomePage = () => {
       <Layout>
         <div className="max-w-8xl mx-auto px-4 py-8">
           <ThemeToggle />
+
           {/* Header */}
-          <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">
-            🇮🇳 IndiaVerse <span className="text-gray-700">– Real-Time Local Trends</span>
+          <h1 className="text-3xl font-bold text-center mb-8 text-blue-800 dark:text-blue-300">
+            🇮🇳 IndiaVerse{" "}
+            <span className="text-gray-700 dark:text-gray-300">
+              – Real-Time Local Trends
+            </span>
           </h1>
+
           <div className="flex flex-col md:flex-row gap-1">
-            <div className="w-full md:w-1/2 bg-blue-50 p-4 rounded-lg shadow">
+            <div className="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow text-gray-900 dark:text-white">
               <IndiaMap onSelectState={setSelectedState} />
             </div>
-            <div className="w-full md:w-1/2 bg-gray-100 p-4 rounded-lg shadow text-gray-900">
+            <div className="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow text-gray-900 dark:text-white">
               <InfoPanel
                 selectedState={selectedState}
                 activeTab={activeTab}

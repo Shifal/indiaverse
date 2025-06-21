@@ -1,14 +1,26 @@
-import { useContext } from "react";
-import { ThemeContext } from "../context/ThemeContext";
+import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme") || "light";
+    setTheme(saved);
+    document.documentElement.classList.toggle("dark", saved === "dark");
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+  };
 
   return (
     <button
       onClick={toggleTheme}
-      className="fixed top-5 right-10 z-50 p-3 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition-all"
-      title="Toggle Dark Mode"
+      className="fixed top-5 right-5 z-50 p-3 rounded-full bg-gray-300 dark:bg-gray-800"
+      title="Toggle Theme"
     >
       {theme === "dark" ? "☀️" : "🌙"}
     </button>
