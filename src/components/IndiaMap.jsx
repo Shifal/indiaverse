@@ -4,6 +4,7 @@ import {
   Geographies,
   Geography,
   ZoomableGroup,
+  Marker,
 } from "react-simple-maps";
 import indiaTopo from "../assets/india.topo.json";
 import stateInfo from "../data/stateInfo";
@@ -23,6 +24,7 @@ const IndiaMap = ({ onSelectState, selectedState, resetMapTrigger }) => {
   const [mapZoom, setMapZoom] = useState(1);
   const [animating, setAnimating] = useState(false);
 
+  // Zoom to selected state
   useEffect(() => {
     if (selectedState && stateCentroids[selectedState]) {
       setMapCenter(stateCentroids[selectedState]);
@@ -30,7 +32,7 @@ const IndiaMap = ({ onSelectState, selectedState, resetMapTrigger }) => {
     }
   }, [selectedState]);
 
-  // Handle reset with animation
+  // Reset map animation
   useEffect(() => {
     if (resetMapTrigger) {
       setAnimating(true);
@@ -88,6 +90,10 @@ const IndiaMap = ({ onSelectState, selectedState, resetMapTrigger }) => {
                       default: {
                         fill: isActive ? "#42A5F5" : "#E0E0E0",
                         outline: "none",
+                        filter: isActive
+                          ? "drop-shadow(0 0 6px rgba(59,130,246,0.75)) drop-shadow(0 0 12px rgba(34,197,94,0.5))"
+                          : "none",
+                        transition: "all 0.3s ease-in-out",
                       },
                       hover: {
                         fill: "#FFB300",
@@ -125,6 +131,16 @@ const IndiaMap = ({ onSelectState, selectedState, resetMapTrigger }) => {
               })
             }
           </Geographies>
+
+          {/* 🔴 Animated Marker */}
+          {selectedState && stateCentroids[selectedState] && (
+            <Marker coordinates={stateCentroids[selectedState]}>
+              <g className="relative">
+                <circle r={10} className="fill-red-500 animate-ping opacity-75" />
+                <circle r={4} className="fill-red-700" />
+              </g>
+            </Marker>
+          )}
         </ZoomableGroup>
       </ComposableMap>
     </div>
