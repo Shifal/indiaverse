@@ -17,9 +17,11 @@ const HomePage = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
   const [resetMap, setResetMap] = useState(false);
   const [resetMapTrigger, setResetMapTrigger] = useState(false);
 
+  const allStates = Object.keys(mockData);
   const tabData = selectedState && mockData[selectedState]?.[activeTab];
 
   useEffect(() => {
@@ -36,14 +38,13 @@ const HomePage = () => {
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) {
-      setSuggestions([]);
-      return;
+      setSuggestions(allStates);
+    } else {
+      const matchedStates = allStates.filter((state) =>
+        state.toLowerCase().includes(term)
+      );
+      setSuggestions(matchedStates);
     }
-
-    const matchedStates = Object.keys(mockData).filter((state) =>
-      state.toLowerCase().includes(term)
-    );
-    setSuggestions(matchedStates);
     setActiveSuggestionIndex(-1);
   }, [searchTerm]);
 
@@ -71,7 +72,6 @@ const HomePage = () => {
     }
   }, [resetMap]);
 
-
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
       setShowSuggestions(false);
@@ -88,11 +88,9 @@ const HomePage = () => {
       setActiveSuggestionIndex((prev) =>
         prev > 0 ? prev - 1 : suggestions.length - 1
       );
-    } else if (e.key === "Enter") {
-      if (activeSuggestionIndex >= 0) {
-        handleSelectSuggestion(suggestions[activeSuggestionIndex]);
-        e.preventDefault();
-      }
+    } else if (e.key === "Enter" && activeSuggestionIndex >= 0) {
+      handleSelectSuggestion(suggestions[activeSuggestionIndex]);
+      e.preventDefault();
     }
   };
 
@@ -113,6 +111,20 @@ const HomePage = () => {
     );
   };
 
+  // Hide dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <>
       {isOffline && <OfflineNotice />}
@@ -128,30 +140,59 @@ const HomePage = () => {
           </h1>
 
           <div className="flex flex-col md:flex-row gap-1">
-            {/* Left Side: Map + Floating Search */}
+            {/* Map + Search */}
             <div className="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 p-4 rounded-lg shadow text-gray-900 dark:text-white relative overflow-hidden">
-              {/* Floating Box */}
-              <div className="absolute top-4 left-4 z-20 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow p-2 flex items-center gap-2 w-[280px]">
+              <div
+                ref={dropdownRef}
+                className="absolute top-4 left-4 z-20 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow p-2 flex items-center gap-2 w-[280px]"
+              >
                 {/* Search */}
                 <div className="relative w-full">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Search state"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setShowSuggestions(true);
-                    }}
-                    onFocus={() => setShowSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                    onKeyDown={handleKeyDown}
-                    className="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
+                  <div className="flex items-center relative">
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      placeholder="Search state"
+                      value={searchTerm}
+                      onChange={(e) => {
+                        setSearchTerm(e.target.value);
+                        setShowSuggestions(true);
+                      }}
+                      onFocus={() => setShowSuggestions(true)}
+                      onKeyDown={handleKeyDown}
+                      className="w-full px-3 py-1.5 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500 pr-8"
+                    />
+                    {/* Dropdown Icon */}
+                    <button
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                      title="Show all states"
+                      onClick={() => {
+                        setShowSuggestions(true);
+                        setSuggestions(allStates);
+                      }}
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
 
-                  {/* Suggestions Dropdown */}
+                  {/* Suggestions */}
                   <div
-                    className={`absolute left-0 top-10 z-30 w-full transform origin-top transition-all duration-200 ${showSuggestions ? "opacity-100 scale-y-100" : "opacity-0 scale-y-75 pointer-events-none"
+                    className={`absolute left-0 top-10 z-30 w-full transition-all origin-top transform duration-200 ${showSuggestions
+                        ? "opacity-100 scale-y-100"
+                        : "opacity-0 scale-y-75 pointer-events-none"
                       }`}
                   >
                     <ul className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow max-h-60 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
@@ -159,8 +200,8 @@ const HomePage = () => {
                         suggestions.map((s, idx) => (
                           <li
                             key={idx}
-                            className={`px-3 py-1.5 text-sm cursor-pointer transition duration-200 delay-[${idx *
-                              30}ms] ${idx === activeSuggestionIndex
+                            className={`px-3 py-1.5 text-sm cursor-pointer transition duration-200 delay-[${idx * 20
+                              }ms] ${idx === activeSuggestionIndex
                                 ? "bg-blue-100 dark:bg-gray-700"
                                 : "hover:bg-blue-50 dark:hover:bg-gray-700"
                               }`}
