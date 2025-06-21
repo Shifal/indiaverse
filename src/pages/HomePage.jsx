@@ -20,6 +20,8 @@ const HomePage = () => {
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [resetMap, setResetMap] = useState(false);
   const [resetMapTrigger, setResetMapTrigger] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false); // ✅ Location Loader
+
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
   const allStates = Object.keys(mockData);
@@ -126,25 +128,36 @@ const HomePage = () => {
     );
   };
 
+  // ✅ Use My Location with Loader
   const handleUseMyLocation = async () => {
     if (!navigator.geolocation) return alert("Geolocation not supported.");
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      try {
-        const response = await fetch(
-          `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${OPEN_CAGE_API_KEY}`
-        );
-        const data = await response.json();
-        const state = data?.results?.[0]?.components?.state;
-        if (state && allStates.includes(state)) {
-          handleSelectSuggestion(state);
-        } else {
-          alert("Your location does not map to an Indian state in this app.");
+    setDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const response = await fetch(
+            `https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${OPEN_CAGE_API_KEY}`
+          );
+          const data = await response.json();
+          const state = data?.results?.[0]?.components?.state;
+          if (state && allStates.includes(state)) {
+            handleSelectSuggestion(state);
+          } else {
+            alert("Your location does not map to an Indian state in this app.");
+          }
+        } catch (err) {
+          console.error("Error in geolocation:", err);
+          alert("Something went wrong while detecting your location.");
+        } finally {
+          setDetectingLocation(false);
         }
-      } catch (err) {
-        console.error("Error in geolocation:", err);
+      },
+      (err) => {
+        alert("Failed to get your location.");
+        setDetectingLocation(false);
       }
-    });
+    );
   };
 
   return (
@@ -225,12 +238,7 @@ const HomePage = () => {
                   </div>
 
                   {/* Dropdown */}
-                  <div
-                    className={`absolute left-0 top-10 z-30 w-full transition-all origin-top transform duration-200 ${showSuggestions
-                      ? "opacity-100 scale-y-100"
-                      : "opacity-0 scale-y-75 pointer-events-none"
-                      }`}
-                  >
+                  <div className={`absolute left-0 top-10 z-30 w-full transition-all origin-top transform duration-200 ${showSuggestions ? "opacity-100 scale-y-100" : "opacity-0 scale-y-75 pointer-events-none"}`}>
                     <ul className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow max-h-60 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
                       {suggestions.length > 0 ? (
                         suggestions.map((s, idx) => (
@@ -268,6 +276,17 @@ const HomePage = () => {
               >
                 📍
               </button>
+
+              {/* ✅ Loader Under Button */}
+              {detectingLocation && (
+                <div className="absolute bottom-16 right-4 z-30 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs px-3 py-1.5 rounded shadow-md flex items-center gap-2">
+                  <svg className="animate-spin h-4 w-4 text-blue-500" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 11-8 8z" />
+                  </svg>
+                  Fetching your location...
+                </div>
+              )}
 
               <IndiaMap
                 onSelectState={(state) => {

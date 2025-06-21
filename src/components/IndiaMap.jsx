@@ -66,13 +66,13 @@ const IndiaMap = ({ onSelectState, selectedState, resetMapTrigger }) => {
         <ZoomableGroup
           center={mapCenter}
           zoom={mapZoom}
-          animate={animating}
-          animationDuration={500}
+          animate={animating ? true : undefined}
           onMoveEnd={({ zoom, coordinates }) => {
             setMapZoom(zoom);
             setMapCenter(coordinates);
           }}
         >
+
           <Geographies geography={indiaTopo}>
             {({ geographies }) =>
               geographies.map((geo) => {
