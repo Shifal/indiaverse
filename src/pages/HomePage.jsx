@@ -5,6 +5,7 @@ import InfoPanel from "../components/InfoPanel";
 import mockData from "../data/stateTrends";
 import ThemeToggle from "../components/ThemeToggle";
 import OfflineNotice from "../components/OfflineNotice";
+import confetti from "canvas-confetti";
 
 const TABS = ["Trends", "Jobs", "Startups", "Videos"];
 
@@ -46,6 +47,17 @@ const HomePage = () => {
       setSuggestions(matchedStates);
     }
     setActiveSuggestionIndex(-1);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (searchTerm.toLowerCase().includes("bharat")) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        emojis: ["🇮🇳", "🎉", "✨"],
+      });
+    }
   }, [searchTerm]);
 
   const handleSelectSuggestion = (state) => {
@@ -114,10 +126,7 @@ const HomePage = () => {
   // Hide dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowSuggestions(false);
       }
     };
@@ -132,12 +141,51 @@ const HomePage = () => {
         <div className="max-w-8xl mx-auto px-4 py-8">
           <ThemeToggle />
 
-          <h1 className="text-3xl font-bold text-center mb-6 text-blue-800 dark:text-blue-300">
-            🇮🇳 IndiaVerse{" "}
-            <span className="text-gray-700 dark:text-gray-300">
-              – Real-Time Local Trends
-            </span>
-          </h1>
+          {/* Animated Title */}
+          <div className="flex justify-center items-center gap-3 mb-6">
+            <div className="w-10 h-10 animate-spin-slow">
+              <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="tricolor" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#FF9933" />
+                    <stop offset="50%" stopColor="white" />
+                    <stop offset="100%" stopColor="#138808" />
+                  </linearGradient>
+                </defs>
+                <circle cx="60" cy="60" r="55" stroke="url(#tricolor)" strokeWidth="10" />
+                <circle cx="60" cy="60" r="2" fill="#000080" />
+                {[...Array(24)].map((_, i) => {
+                  const angle = (360 / 24) * i;
+                  const rad = (angle * Math.PI) / 180;
+                  const x1 = 60 + 2 * Math.cos(rad);
+                  const y1 = 60 + 2 * Math.sin(rad);
+                  const x2 = 60 + 50 * Math.cos(rad);
+                  const y2 = 60 + 50 * Math.sin(rad);
+                  return (
+                    <line
+                      key={i}
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="#000080"
+                      strokeWidth="2"
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+
+            <h1 className="text-3xl font-bold text-center text-blue-800 dark:text-blue-300">
+              IndiaVerse{" "}
+              <span className="text-gray-700 dark:text-gray-300">
+                – Real-Time Local Trends
+              </span>
+            </h1>
+          </div>
+
+
+
 
           <div className="flex flex-col md:flex-row gap-1">
             {/* Map + Search */}
